@@ -1,4 +1,4 @@
-http://{$DOMAIN} {
+https://{$DOMAIN} {
  encode gzip
  handle_path /api/* {
   reverse_proxy backend:80

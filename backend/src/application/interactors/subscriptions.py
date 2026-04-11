@@ -1,5 +1,6 @@
 import json
 from dataclasses import dataclass
+from typing import ClassVar
 
 from application.dto import AuthorDTO
 from application.events import SubscriptionCreatedEvent
@@ -135,8 +136,8 @@ class GetMySubscriptionsInteractor:
     _user_repository: UserRepository
     _cache_service: CacheService
 
-    CACHE_TTL: int = 60
-    CACHE_KEY_PREFIX: str = "my_subscriptions"
+    CACHE_TTL: ClassVar[int] = 60
+    CACHE_KEY_PREFIX: ClassVar[str] = "my_subscriptions"
 
     async def execute(self, user_id: int) -> list[AuthorDTO]:
         cache_key = f"{self.CACHE_KEY_PREFIX}:{user_id}"
