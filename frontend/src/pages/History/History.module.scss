@@ -1,0 +1,30 @@
+.historyPage {
+	padding: 24px;
+	width: 100%;
+
+	.title {
+		color: var(--color-white);
+		font-family: 'Roboto Flex';
+		font-size: 24px;
+		font-weight: 600;
+		margin-bottom: 24px;
+	}
+
+	.videoGrid {
+		display: grid;
+		grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+		gap: 24px;
+	}
+
+	.errorMessage,
+	.emptyMessage {
+		text-align: center;
+		color: rgba(255, 255, 255, 0.8);
+		font-size: 16px;
+		padding: 48px 0;
+	}
+
+	.errorMessage {
+		color: var(--color-red);
+	}
+} 

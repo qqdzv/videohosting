@@ -1,0 +1,10 @@
+apiVersion: 1
+
+datasources:
+  - name: Prometheus
+    uid: prometheus-main
+    type: prometheus
+    access: proxy
+    url: ${PROMETHEUS__HOST}:${PROMETHEUS__PORT}
+    isDefault: false
+    editable: false

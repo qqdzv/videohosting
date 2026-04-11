@@ -1,0 +1,1 @@
+CREATE DATABASE videohosting_notifications;

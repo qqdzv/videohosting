@@ -1,0 +1,104 @@
+.mainLayout {
+	width: 100%;
+	min-height: 100vh;
+	display: flex;
+	flex-direction: column;
+	background-color: var(--background-color);
+	
+	.content {
+		margin-top: 110px;
+		width: 100%;
+		flex: 1;
+		display: flex;
+		gap: 24px;
+
+		.nav {
+			width: 240px;
+			min-width: 240px;
+			padding: 20px 0;
+			display: flex;
+			flex-direction: column;
+			background-color: #353535;
+			height: calc(100vh - 110px);
+			position: fixed;
+			overflow-y: auto;
+			border-radius: 4px;
+			&::-webkit-scrollbar {
+				width: 4px;
+				background-color: transparent;
+			}
+
+			&::-webkit-scrollbar-thumb {
+				background-color: rgba(255, 255, 255, 0.1);
+				border-radius: 2px;
+			}
+
+			.navItem {
+				display: flex;
+				align-items: center;
+				gap: 16px;
+				padding: 12px 24px;
+				color: rgba(255, 255, 255, 0.8);
+				text-decoration: none;
+				transition: all 0.2s;
+				font-size: 16px;
+
+				img {
+					width: 24px;
+					height: 24px;
+					opacity: 0.8;
+					transition: opacity 0.2s;
+
+					path {
+						transition: stroke 0.2s, fill 0.2s;
+					}
+				}
+
+				&:hover {
+					background-color: rgba(255, 255, 255, 0.05);
+					color: #fff;
+
+					img {
+						opacity: 1;
+					}
+				}
+
+				&.active {
+					background-color: rgba(255, 255, 255, 0.1);
+					color: #fff;
+
+					img {
+						opacity: 1;
+					}
+				}
+
+				&.subscriptionItem {
+					.avatar {
+						width: 32px;
+						height: 32px;
+						border-radius: 50%;
+					}
+				}
+			}
+
+			.subscriptionsList {
+				margin-top: 16px;
+				padding-top: 16px;
+				border-top: 1px solid rgba(255, 255, 255, 0.1);
+
+				.subscriptionsTitle {
+					padding: 8px 24px;
+					color: rgba(255, 255, 255, 0.5);
+					font-size: 14px;
+				}
+			}
+		}
+
+		.mainContent {
+			flex: 1;
+			margin-left: 264px;
+			padding: 20px 24px;
+			min-height: calc(100vh - 110px);
+		}
+	}
+}

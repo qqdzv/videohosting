@@ -1,0 +1,97 @@
+.btn {
+	display: flex;
+	height: 50px;
+	padding: 10px 81px;
+	justify-content: center;
+	align-items: center;
+	gap: 10px;
+	align-self: stretch;
+	border-radius: 6px;
+	border: 1px solid #fff;
+	transition: background-color 0.25s ease, border-color 0.25s ease, transform 0.1s ease;
+
+	&.primary {
+		background-color: var(--color-main, #7713c3);
+		border-color: var(--color-main, #7713c3);
+	}
+
+	&.subscribed {
+		background-color: rgba(255, 255, 255, 0.12);
+		border-color: transparent;
+
+		&:hover {
+			background-color: rgba(255, 255, 255, 0.2);
+		}
+	}
+
+	&.loading {
+		pointer-events: none;
+		border-color: transparent;
+		background-color: rgba(255, 255, 255, 0.1);
+	}
+}
+
+.inner {
+	color: var(--color-white, #fff);
+	font-family: 'Roboto Flex';
+	font-size: 14px;
+	font-style: normal;
+	font-weight: 400;
+	line-height: normal;
+	letter-spacing: 0.3px;
+	position: relative;
+}
+
+.btn:active {
+	background-color: #5c198e;
+
+	.inner {
+		top: 2px;
+	}
+}
+
+.btn.primary:active {
+	background-color: #5c198e;
+	.inner {
+		top: 2px;
+	}
+}
+
+@keyframes spin {
+	to { transform: rotate(360deg); }
+}
+
+.spinner {
+	display: block;
+	width: 16px;
+	height: 16px;
+	border: 2px solid rgba(255, 255, 255, 0.3);
+	border-top-color: #fff;
+	border-radius: 50%;
+	animation: spin 0.7s linear infinite;
+}
+
+.btn:disabled {
+	background-color: var(--color-disabled, #737373);
+	cursor: not-allowed !important;
+	.inner {
+		color: var(--color-white, #fff);
+	}
+
+	&:active {
+		background-color: var(--color-disabled, #737373);
+		.inner {
+			color: var(--color-white, #fff);
+			top: 0px;
+		}
+	}
+}
+.btn.s {
+	display: flex;
+	max-width: 220px;
+	padding: 16px 20px;
+	justify-content: center;
+	align-items: center;
+	gap: 8px;
+	border-radius: 100px;
+}

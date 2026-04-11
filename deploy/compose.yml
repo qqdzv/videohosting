@@ -1,0 +1,71 @@
+x-application: &application
+  networks:
+    - hosting_network
+  restart: always
+
+services:
+  backend:
+    <<: *application
+    image: $IMAGE_BACKEND:$CI_COMMIT_SHORT_SHA
+    ports:
+      - "8088:80"
+    env_file:
+      - backend.env
+    volumes:
+      - ./secrets:/run/secrets:ro
+    command: "uvicorn --factory main:create_app --host 0.0.0.0 --port 80"
+    healthcheck:
+      test: ["CMD", "python3", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:80/health')"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 15s
+
+  converter:
+    <<: *application
+    image: $IMAGE_CONVERTER:$CI_COMMIT_SHORT_SHA
+    expose:
+      - "80"
+    env_file:
+      - converter.env
+    command: sh -c "faststream run main:app"
+
+  notifications:
+    <<: *application
+    image: $IMAGE_NOTIFICATIONS:$CI_COMMIT_SHORT_SHA
+    expose:
+      - "80"
+    env_file:
+      - notifications.env
+    volumes:
+      - ./secrets:/run/secrets:ro
+    command: sh -c "uvicorn --factory main:configure_fastapi_app --host 0.0.0.0 --port 80"
+    healthcheck:
+      test: ["CMD", "python3", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:80/health')"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 15s
+
+  frontend:
+    <<: *application
+    image: $IMAGE_FRONTEND:$CI_COMMIT_SHORT_SHA
+    init: true
+    ports:
+      - "443:443"
+      - "80:80"
+    expose:
+      - "3000"
+    env_file:
+      - frontend.env
+    volumes:
+      - caddy_data:/data
+      - caddy_config:/config
+
+networks:
+  hosting_network:
+    external: true
+
+volumes:
+  caddy_data:
+  caddy_config:

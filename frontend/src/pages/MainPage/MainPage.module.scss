@@ -1,0 +1,22 @@
+.videoGrid {
+	width: 100%;
+	display: grid;
+	grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+	gap: 16px;
+	max-height: calc(100vh - 140px);
+	overflow-y: auto;
+	padding-right: 8px;
+	padding-bottom: 40px;
+
+	&::-webkit-scrollbar {
+		margin-left: 4px;
+		width: 8px;
+		background-color: var(--background-color);
+	}
+
+	&::-webkit-scrollbar-thumb {
+		margin-left: 4px;
+		background-color: var(--color-main);
+		border-radius: 4px;
+	}
+}

@@ -1,0 +1,89 @@
+default:
+  tags:
+    - fws
+  before_script:
+    - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
+
+variables:
+  IMAGE_BACKEND: $CI_REGISTRY_IMAGE/backend
+  IMAGE_FRONTEND: $CI_REGISTRY_IMAGE/frontend
+  IMAGE_CONVERTER: $CI_REGISTRY_IMAGE/converter
+  IMAGE_NOTIFICATIONS: $CI_REGISTRY_IMAGE/notifications
+  DOCKER_BUILDKIT: 1
+
+stages:
+  - infra
+  - build
+  - deploy
+
+build_backend:
+  stage: build
+  when: manual
+  script:
+    - docker build -t $IMAGE_BACKEND:$CI_COMMIT_SHORT_SHA ./backend
+    - docker push $IMAGE_BACKEND:$CI_COMMIT_SHORT_SHA
+
+build_frontend:
+  stage: build
+  when: manual
+  script:
+    - cp /envs/frontend.env ./frontend/.env
+    - docker build -t $IMAGE_FRONTEND:$CI_COMMIT_SHORT_SHA ./frontend
+    - docker push $IMAGE_FRONTEND:$CI_COMMIT_SHORT_SHA
+
+build_converter:
+  stage: build
+  when: manual
+  script:
+    - docker build -t $IMAGE_CONVERTER:$CI_COMMIT_SHORT_SHA ./converter
+    - docker push $IMAGE_CONVERTER:$CI_COMMIT_SHORT_SHA
+
+build_notifications:
+  stage: build
+  when: manual
+  script:
+    - docker build -t $IMAGE_NOTIFICATIONS:$CI_COMMIT_SHORT_SHA ./notifications
+    - docker push $IMAGE_NOTIFICATIONS:$CI_COMMIT_SHORT_SHA
+
+deploy_infra:
+  stage: infra
+  when: manual
+  manual_confirmation: "Вы уверены что хотите задеплоить инфраструктуру?"
+  script:
+    - rm -rf /projects/videohosting/storage /projects/videohosting/monitoring
+    - cp deploy/infra.yml /projects/videohosting/infra.yml
+    - cp -r storage /projects/videohosting/
+    - cp -r monitoring /projects/videohosting/
+    - cp /envs/.env /projects/videohosting/.env
+    - docker compose -f /projects/videohosting/infra.yml up -d --force-recreate
+
+.deploy_base: &deploy_base
+  stage: deploy
+  when: manual
+  before_script:
+    - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
+    - rm -rf /projects/videohosting/secrets
+    - cp deploy/compose.yml /projects/videohosting/compose.yml
+    - cp -r /secrets/. /projects/videohosting/secrets/
+    - cp -r /envs/. /projects/videohosting/
+
+deploy_backend:
+  <<: *deploy_base
+  script:
+    - docker compose -f /projects/videohosting/compose.yml up -d --force-recreate backend
+
+deploy_frontend:
+  <<: *deploy_base
+  script:
+    - docker compose -f /projects/videohosting/compose.yml up -d --force-recreate frontend
+
+deploy_converter:
+  <<: *deploy_base
+  script:
+    - docker compose -f /projects/videohosting/compose.yml up -d --force-recreate converter
+
+deploy_notifications:
+  <<: *deploy_base
+  script:
+    - docker compose -f /projects/videohosting/compose.yml up -d --force-recreate notifications
+

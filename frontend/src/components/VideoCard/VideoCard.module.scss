@@ -1,0 +1,95 @@
+.videoCard{
+    width: 320px;
+    font-family: "Roboto Flex";
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    cursor: pointer;
+    transition: transform 0.2s;
+
+    &:hover {
+        transform: translateY(-2px);
+
+        .preview img {
+            transform: scale(1.05);
+        }
+    }
+
+    .preview{
+        width: 100%;
+        aspect-ratio: 16/9;
+        border-radius: 8px;
+        overflow: hidden;
+        background-color: var(--background-color-external);
+
+        img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.2s;
+        }
+
+        .blackBox{
+            width: 100%;
+            height: 100%;
+            background-color: var(--background-color-external);
+        }
+    }
+    .info{
+        padding: 0.75rem;
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        align-items: start;
+        .titleRow {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 0.5rem;
+            width: 100%;
+        }
+        .name{
+            font-weight: 500;
+            font-size: 1rem;
+            color: var(--text-color);
+            flex: 1;
+            margin-right: 8px;
+        }
+        .actions {
+            flex-shrink: 0;
+            margin-top: -4px;
+        }
+        .deleteBtn {
+            background-color: var(--danger-color);
+            color: var(--text-color);
+
+            &:hover {
+                background-color: var(--danger-hover-color);
+            }
+        }
+        .details {
+            display: flex;
+            flex-direction: column;
+            gap: 0.25rem;
+            .author{
+                font-size: 0.875rem;
+                color: var(--text-secondary);
+                cursor: pointer;
+
+                &:hover {
+                    color: var(--text-color);
+                }
+
+                &.subscribed {
+                    color: var(--primary-color);
+                }
+            }
+            .stats {
+                display: flex;
+                gap: 0.5rem;
+                font-size: 0.875rem;
+                color: var(--text-secondary);
+            }
+        }
+    }
+}

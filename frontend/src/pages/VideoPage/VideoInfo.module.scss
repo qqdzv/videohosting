@@ -1,0 +1,207 @@
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+.container {
+  padding: 20px;
+  background: #1a1a1a;
+  border-radius: 8px;
+  color: #fff;
+
+  .title {
+    font-size: 20px;
+    font-weight: 500;
+    margin-bottom: 16px;
+  }
+
+  .metadata {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 20px;
+
+    .authorInfo {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+
+      .avatar {
+        width: 48px;
+        height: 48px;
+        border-radius: 50%;
+      }
+
+      .authorDetails {
+        .authorName {
+          display: flex;
+          flex-direction: column;
+          
+          span:first-child {
+            font-weight: 500;
+            font-size: 16px;
+          }
+
+          .username {
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 14px;
+          }
+        }
+
+        .subscriberCount {
+          color: rgba(255, 255, 255, 0.7);
+          font-size: 14px;
+          margin-top: 4px;
+        }
+      }
+
+      .subscribeButton {
+        padding: 10px 16px;
+        border-radius: 20px;
+        font-size: 14px;
+        font-weight: 500;
+        cursor: pointer;
+        transition: background-color 0.25s ease, color 0.25s ease;
+        margin-left: 16px;
+        border: none;
+        background-color: var(--color-main);
+        color: #fff;
+        min-width: 120px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        &:hover {
+          filter: brightness(0.9);
+        }
+
+        &.subscribed {
+          background-color: rgba(255, 255, 255, 0.12);
+
+          &:hover {
+            background-color: rgba(255, 0, 0, 0.15);
+            color: #ff4444;
+          }
+        }
+
+        &.loading {
+          cursor: not-allowed;
+          background-color: rgba(255, 255, 255, 0.08);
+        }
+
+        .spinner {
+          display: block;
+          width: 16px;
+          height: 16px;
+          border: 2px solid rgba(255, 255, 255, 0.3);
+          border-top-color: #fff;
+          border-radius: 50%;
+          animation: spin 0.7s linear infinite;
+        }
+      }
+    }
+
+    .stats {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      color: rgba(255, 255, 255, 0.7);
+      font-size: 14px;
+      position: relative;
+
+      .actions {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+        position: relative;
+
+        .reactions {
+          display: flex;
+          gap: 8px;
+
+          .reactionButton {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            padding: 8px 16px;
+            border-radius: 20px;
+            background: rgba(255, 255, 255, 0.1);
+            border: none;
+            color: #fff;
+            cursor: pointer;
+            transition: background-color 0.2s;
+
+            &:hover {
+              background: rgba(255, 255, 255, 0.2);
+            }
+
+            &.active {
+              background: var(--color-main);
+            }
+          }
+        }
+
+        .shareButton {
+          display: flex;
+          align-items: center;
+          gap: 8px;
+          padding: 8px 16px;
+          border-radius: 20px;
+          background: rgba(255, 255, 255, 0.1);
+          border: none;
+          color: #fff;
+          cursor: pointer;
+          transition: background-color 0.2s;
+
+          img {
+            width: 20px;
+            height: 20px;
+          }
+
+          &:hover {
+            background: rgba(255, 255, 255, 0.2);
+          }
+        }
+
+        .shareMessage {
+          position: absolute;
+          top: 100%;
+          right: 0;
+          margin-top: 8px;
+          background: var(--color-main);
+          color: #fff;
+          padding: 8px 16px;
+          border-radius: 6px;
+          font-size: 14px;
+          animation: fadeIn 0.2s ease-in-out;
+          z-index: 10;
+          white-space: nowrap;
+        }
+      }
+    }
+  }
+
+  .description {
+    color: rgba(255, 255, 255, 0.9);
+    font-size: 14px;
+    line-height: 1.5;
+    white-space: pre-wrap;
+
+    .date {
+      display: block;
+      margin-top: 12px;
+      color: rgba(255, 255, 255, 0.5);
+      font-size: 12px;
+    }
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+} 

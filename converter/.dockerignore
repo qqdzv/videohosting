@@ -1,0 +1,32 @@
+# Игнорируем виртуальные окружения
+.venv/
+.venv
+*venv/
+*.venv/
+venv
+venv/
+__pycache__/
+*.pyc
+*.pyo
+backend/.venv
+.ruff_cache
+
+
+# Логи и временные файлы
+*.log
+*.sqlite3
+*.db
+
+# Системные файлы
+.DS_Store
+*.swp
+
+# Node / фронтенд
+node_modules/
+dist/
+build/
+
+
+# Git
+.git/
+.gitignore

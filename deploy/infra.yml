@@ -1,0 +1,142 @@
+x-application: &application
+  env_file: .env
+  networks:
+    - hosting_network
+  restart: always
+
+services:
+  postgres:
+    <<: *application
+    image: postgres:17
+    expose:
+      - "5432"
+    environment:
+      POSTGRES_USER: ${POSTGRES__USER}
+      POSTGRES_PASSWORD: ${POSTGRES__PASSWORD}
+      POSTGRES_DB: ${POSTGRES__NAME}
+    volumes:
+      - db-data:/var/lib/postgresql/data
+      - ./storage/postgres/init.sql:/docker-entrypoint-initdb.d/init.sql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES__USER} -d ${POSTGRES__NAME}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  redis:
+    <<: *application
+    image: redis:7
+    expose:
+      - "6379"
+    volumes:
+      - redis-data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  kafka:
+    <<: *application
+    image: apache/kafka:latest
+    expose:
+      - "9092"
+    environment:
+      - KAFKA_NODE_ID=0
+      - KAFKA_PROCESS_ROLES=broker,controller
+      - KAFKA_CONTROLLER_QUORUM_VOTERS=0@kafka:9093
+      - KAFKA_LISTENERS=PLAINTEXT://:9092,CONTROLLER://:9093
+      - KAFKA_ADVERTISED_LISTENERS=PLAINTEXT://kafka:9092
+      - KAFKA_LISTENER_SECURITY_PROTOCOL_MAP=CONTROLLER:PLAINTEXT,PLAINTEXT:PLAINTEXT
+      - KAFKA_CONTROLLER_LISTENER_NAMES=CONTROLLER
+      - KAFKA_INTER_BROKER_LISTENER_NAME=PLAINTEXT
+    volumes:
+      - kafka-data:/var/lib/kafka/data
+    healthcheck:
+      test: ["CMD", "/opt/kafka/bin/kafka-topics.sh", "--bootstrap-server", "localhost:9092", "--list"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  s3:
+    <<: *application
+    image: gresau/localstack-persist:4
+    ports:
+      - "4566:4566"
+    environment:
+      - PERSIST_DEFAULT=1
+    volumes:
+      - "./storage/localstack/setup.py:/etc/localstack/init/ready.d/setup.py:ro"
+      - "localstack-data:/persisted-data"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:4566/_localstack/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  loki:
+    <<: *application
+    image: grafana/loki:3.0.0
+    expose:
+      - "3100"
+    volumes:
+      - ./monitoring/loki/config.yaml:/etc/loki/config.yaml:ro
+      - loki-data:/loki
+    command: -config.file=/etc/loki/config.yaml
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://localhost:3100/ready"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  alloy:
+    <<: *application
+    image: grafana/alloy:v1.8.0
+    expose:
+      - "12345"
+    volumes:
+      - ./monitoring/alloy/config.alloy:/etc/alloy/config.alloy:ro
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    command: run /etc/alloy/config.alloy
+    depends_on:
+      loki:
+        condition: service_healthy
+
+  prometheus:
+    <<: *application
+    image: prom/prometheus:v3.0.0
+    expose:
+      - "9090"
+    volumes:
+      - ./monitoring/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - prometheus-data:/prometheus
+    command: --config.file=/etc/prometheus/prometheus.yml
+
+  grafana:
+    <<: *application
+    image: grafana/grafana:11.0.0
+    ports:
+      - "8888:3000"
+    environment:
+      GF_SECURITY_ADMIN_USER: ${GRAFANA__ADMIN_LOGIN}
+      GF_SECURITY_ADMIN_PASSWORD: ${GRAFANA__ADMIN_PASSWORD}
+      GF_USERS_ALLOW_SIGN_UP: "false"
+    volumes:
+      - grafana-data:/var/lib/grafana
+      - ./monitoring/grafana/provisioning:/etc/grafana/provisioning:ro
+    depends_on:
+      loki:
+        condition: service_healthy
+
+networks:
+  hosting_network:
+    external: true
+
+volumes:
+  db-data:
+  redis-data:
+  kafka-data:
+  localstack-data:
+  loki-data:
+  prometheus-data:
+  grafana-data:

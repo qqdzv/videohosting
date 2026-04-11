@@ -1,0 +1,35 @@
+.header {
+	display: flex;
+	flex-direction: row;
+	justify-content: start;
+    align-items: center;
+	padding: 24px;
+	width: 100%;
+	position: absolute;
+	top: 0;
+	left: 0;
+	gap: 24px;
+	background-color: var(--background-color);
+	max-height: 140px;
+	min-height: 110px;
+	z-index: 3;
+    
+	.logo {
+        width: 176px;
+		height: auto;
+		cursor: pointer;
+		margin-right: 64px;
+    }
+
+	.right {
+		width: calc(100% - 234px);
+		display: flex;
+		flex-direction: row;
+        align-items: center;
+        gap: 24px;
+
+		form {
+			flex: 1;
+		}
+	}
+}

@@ -1,0 +1,6 @@
+from typing import Protocol
+
+
+class UnitOfWork(Protocol):
+    async def __aenter__(self) -> "UnitOfWork": ...
+    async def __aexit__(self, exc_type: object, exc_val: BaseException | None, exc_tb: object) -> None: ...
