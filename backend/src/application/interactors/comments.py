@@ -61,7 +61,7 @@ class DeleteCommentInteractor:
         async with self._uow:
             comment = await self._comment_repository.find_by_id(comment_id)
             if not comment:
-                raise CommentNotFoundError
+                raise CommentNotFoundError(comment_id)
             if comment.author_id != user_id:
                 raise NotYourCommentError
 
@@ -77,7 +77,7 @@ class EditCommentInteractor:
         async with self._uow:
             comment = await self._comment_repository.find_by_id(comment_id)
             if not comment:
-                raise CommentNotFoundError
+                raise CommentNotFoundError(comment_id)
             if comment.author_id != user_id:
                 raise NotYourCommentError
 
