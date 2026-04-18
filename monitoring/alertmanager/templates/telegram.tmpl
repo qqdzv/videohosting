@@ -1,0 +1,11 @@
+{{ define "telegram.message" -}}
+{{ if eq .Status "firing" }}🔥 <b>FIRING</b>{{ else }}✅ <b>RESOLVED</b>{{ end }} — {{ .Alerts | len }} alert(s)
+{{ range .Alerts }}
+<b>{{ .Labels.alertname }}</b> (severity: {{ .Labels.severity }})
+{{ if .Labels.job }}<i>job:</i> {{ .Labels.job }}
+{{ end }}{{ if .Labels.instance }}<i>instance:</i> {{ .Labels.instance }}
+{{ end }}{{ if .Annotations.summary }}<i>summary:</i> {{ .Annotations.summary }}
+{{ end }}{{ if .Annotations.description }}{{ .Annotations.description }}
+{{ end }}
+{{ end -}}
+{{ end }}

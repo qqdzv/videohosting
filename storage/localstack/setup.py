@@ -52,7 +52,7 @@ cors_config = {
     "CORSRules": [
         {
             "AllowedOrigins": ["*"],
-            "AllowedMethods": ["GET", "HEAD"],
+            "AllowedMethods": ["GET", "HEAD", "PUT", "POST", "DELETE"],
             "AllowedHeaders": ["*"],
             "MaxAgeSeconds": 3000,
         }

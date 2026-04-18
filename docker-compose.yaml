@@ -210,14 +210,42 @@ services:
     container_name: prometheus
     profiles: ["monitoring"]
     restart: unless-stopped
-    expose:
-      - "9090"
+    ports:
+      - "9090:9090"
     env_file:
       - .env
     volumes:
       - ./monitoring/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - ./monitoring/prometheus/rules.yml:/etc/prometheus/rules.yml:ro
       - prometheus-data:/prometheus
     command: --config.file=/etc/prometheus/prometheus.yml
+    depends_on:
+      - alertmanager
+
+  alertmanager:
+    image: prom/alertmanager:v0.27.0
+    container_name: alertmanager
+    profiles: ["monitoring"]
+    restart: unless-stopped
+    ports:
+      - "127.0.0.1:9093:9093"
+    env_file:
+      - .env
+    volumes:
+      - ./monitoring/alertmanager/alertmanager.yml.tpl:/etc/alertmanager/alertmanager.yml.tpl:ro
+      - ./monitoring/alertmanager/templates:/etc/alertmanager/templates:ro
+      - alertmanager-data:/alertmanager
+    entrypoint:
+      - /bin/sh
+      - -c
+      - |
+        set -e
+        sed -e "s|__TELEGRAM__BOT_TOKEN__|$${TELEGRAM__BOT_TOKEN}|g" \
+            -e "s|__TELEGRAM__CHAT_ID__|$${TELEGRAM__CHAT_ID}|g" \
+            /etc/alertmanager/alertmanager.yml.tpl > /tmp/alertmanager.yml
+        exec /bin/alertmanager \
+          --config.file=/tmp/alertmanager.yml \
+          --storage.path=/alertmanager
 
   grafana:
     image: grafana/grafana:11.0.0
@@ -248,4 +276,5 @@ volumes:
   caddy_config:
   loki-data:
   prometheus-data:
+  alertmanager-data:
   grafana-data:

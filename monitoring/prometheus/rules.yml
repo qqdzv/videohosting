@@ -1,0 +1,41 @@
+groups:
+  - name: videohosting.availability
+    rules:
+      - alert: ServiceDown
+        expr: up{job=~"backend|notifications|converter"} == 0
+        for: 1m
+        labels:
+          severity: critical
+        annotations:
+          summary: "Сервис {{ $labels.job }} недоступен"
+          description: "Инстанс {{ $labels.instance }} (job={{ $labels.job }}) не отвечает на scrape более 1 минуты."
+
+  - name: videohosting.http
+    rules:
+      - alert: HighHTTP5xxRate
+        expr: |
+          sum by (job) (rate(http_requests_total{job=~"backend|notifications",status=~"5.."}[5m]))
+          /
+          sum by (job) (rate(http_requests_total{job=~"backend|notifications"}[5m]))
+          > 0.05
+        for: 5m
+        labels:
+          severity: critical
+        annotations:
+          summary: "Высокая доля 5xx в {{ $labels.job }}"
+          description: "За последние 5 минут доля 5xx-ответов в {{ $labels.job }} превысила 5% (текущее значение: {{ $value | humanizePercentage }})."
+
+  - name: videohosting.converter
+    rules:
+      - alert: ConverterErrorRate
+        expr: |
+          sum(rate(converter_messages_total{status="error"}[5m]))
+          /
+          sum(rate(converter_messages_total[5m]))
+          > 0.2
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "Converter: высокая доля ошибок конвертации"
+          description: "Более 20% сообщений конвертации завершились ошибкой за последние 5 минут (текущее значение: {{ $value | humanizePercentage }})."
